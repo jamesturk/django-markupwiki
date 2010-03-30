@@ -19,6 +19,24 @@ def title_check(view):
 
 @title_check
 def view_article(request, title, n=None):
+    ''' view an article (or a specific revision of an article)
+
+    if n is specified will show nth revision, otherwise latest will be shown
+
+    if the article does not exist the user will be redirected to the edit page
+
+    Context:
+        article - ``Article`` instance
+        version - ``ArticleVersion`` to display
+        form    - ``ModerationForm`` or ``StaffModerationForm`` instance
+                  only present if user is staff or the article creator
+
+    Templates:
+        article.html - default template used
+        deleted_article.html - template used if article has been deleted
+        private_article.html - template used if article is private for user
+    '''
+
     try:
         article = Article.objects.get(title=title)
     except Article.DoesNotExist:
@@ -50,15 +68,27 @@ def view_article(request, title, n=None):
 @title_check
 @login_required
 def edit_article(request, title):
+    ''' edit (or create) an article
+
+        Context:
+            title - title of article being edited
+            article - article being edited (potentially None)
+            form - form to edit article
+
+        Templates:
+            edit_article.html - Default template for editing the article.
+            locked_article.html - Template shown if editing is locked.
+    '''
     try:
         article = Article.objects.get(title=title)
     except Article.DoesNotExist:
         article = None
 
-    if article.locked:
-        return render_to_response('article_locked.html', {'article': article})
+    if article and article.locked:
+        return render_to_response('locked_article.html', {'article': article})
 
     if request.method == 'GET':
+        # either get an empty ArticleForm or one based on latest version
         if article:
             version = article.versions.latest()
             form = ArticleForm(data={'body':version.body,
@@ -69,16 +99,22 @@ def edit_article(request, title):
         form = ArticleForm(request.POST)
         if form.is_valid():
             if not article:
+                # if article doesn't exist create it and start num at 0
                 article = Article.objects.create(title=title,
                                                  creator=request.user)
                 num = 0
             else:
+                # otherwise get latest num
                 num = article.versions.latest().number + 1
+
+            # create a new version attached to article specified in name
             version = form.save(False)
             version.article = article
             version.author = request.user
             version.number = num
             version.save()
+
+            # redirect to view article on save
             return redirect(article)
 
     return render_to_response('edit_article.html', {'title':title,
@@ -89,14 +125,19 @@ def edit_article(request, title):
 @require_POST
 @title_check
 def article_status(request, title):
+    ''' POST-only view to update article status
+    '''
     article = get_object_or_404(Article, title=title)
     status = int(request.POST['status'])
 
+    # can only change status to/from LOCKED or DELETED if staff
     if article.status in (LOCKED, DELETED) or status in (LOCKED, DELETED):
         perm_test = lambda u,a: u.is_staff
+    # can only change status to/from PUBLIC/PRIVATE if staff or creator
     elif article.status in (PUBLIC, PRIVATE) or status in (PUBLIC, PRIVATE):
         perm_test = lambda u,a: u.is_staff or u == a.creator
 
+    # check that requrired permissions are met before updating status
     if perm_test(request.user, article):
         article.status = status
         article.save()

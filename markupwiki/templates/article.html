@@ -1,6 +1,6 @@
 <h2>{{article.title}}</h2>
 
-{% if article.locked %} <a href="{% url edit_article article.title %}">edit article</a> {% endif %}
+{% if not article.locked %} <a href="{% url edit_article article.title %}">edit article</a> {% endif %}
 | <a href="{% url article_history article.title %}">view history</a>
 
 {% if form %}
