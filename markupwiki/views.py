@@ -46,23 +46,28 @@ def view_article(request, title, n=None):
         version = article.versions.get(number=n)
     else:
         version = article.versions.latest()
+        version.is_latest = True
+
+    # set editable flag on article
+    article.editable = article.is_editable_by_user(request.user)
 
     context = {'article':article, 'version': version}
 
+
     if request.user.is_staff:
         context['form'] = StaffModerationForm(instance=article)
-    elif request.user == article.creator:
+    elif request.user == article.creator and article.status in (PUBLIC, PRIVATE):
         context['form'] = ModerationForm(instance=article)
 
-    if article.status == DELETED:
-        return render_to_response('deleted_article.html', context,
+    if article.is_deleted():
+        return render_to_response('markupwiki/deleted_article.html', context,
                                   context_instance=RequestContext(request))
-    elif (article.status == PRIVATE and request.user != article.creator
+    elif (article.is_private() and request.user != article.creator
           and not request.user.is_staff):
         return render_to_response('private_article.html', context,
                                   context_instance=RequestContext(request))
 
-    return render_to_response('article.html', context,
+    return render_to_response('markupwiki/article.html', context,
                               context_instance=RequestContext(request))
 
 @title_check
@@ -84,7 +89,7 @@ def edit_article(request, title):
     except Article.DoesNotExist:
         article = None
 
-    if article and article.locked:
+    if article and article.is_locked():
         return render_to_response('locked_article.html', {'article': article})
 
     if request.method == 'GET':
@@ -130,10 +135,10 @@ def article_status(request, title):
     article = get_object_or_404(Article, title=title)
     status = int(request.POST['status'])
 
-    # can only change status to/from LOCKED or DELETED if staff
+    # can only change status to/from locked or deleted if staff
     if article.status in (LOCKED, DELETED) or status in (LOCKED, DELETED):
         perm_test = lambda u,a: u.is_staff
-    # can only change status to/from PUBLIC/PRIVATE if staff or creator
+    # can only change status to/from public/private if staff or creator
     elif article.status in (PUBLIC, PRIVATE) or status in (PUBLIC, PRIVATE):
         perm_test = lambda u,a: u.is_staff or u == a.creator
 

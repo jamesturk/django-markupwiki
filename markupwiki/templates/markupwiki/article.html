@@ -1,0 +1,36 @@
+{% extends "markupwiki/base.html" %}
+
+{% block title %} {{article.title}} {% endblock %}
+
+{% block content %}
+
+<h2 class="article_title">
+{% block article_title %}
+    {{article.title}}
+    {% if not version.is_latest %} [revision {{version.number}}] {% endif %}
+{% endblock %}
+</h2>
+
+<div class="article_meta">
+{% block article_meta %}
+    {% if article.editable %}
+        <a href="{% url edit_article article.title %}">edit article</a> |
+    {% endif %}
+    <a href="{% url article_history article.title %}">view history</a>
+
+    {% if form %}
+    <form method="POST" action="{% url update_article_status article.title %}">
+        {{form.status.label_tag}}  {{ form.status }}
+        <input type="submit" />
+    </form>
+    {% endif %}
+{% endblock %}
+</div>
+
+<div class="article_body">
+{% block article_body %}
+    {{version.body}}
+{% endblock %}
+</div>
+
+{% endblock content %}
