@@ -145,5 +145,7 @@ def article_diff(request, title):
     from_body = from_version.body.raw.split('\n')
     to_body = to_version.body.raw.split('\n')
     table = differ.make_table(from_body, to_body)
-    return render_to_response('article_diff.html', {'table':table},
+    return render_to_response('article_diff.html',
+                              {'article': article, 'table':table,
+                               'from': from_id, 'to':to_id},
                               context_instance=RequestContext(request))
