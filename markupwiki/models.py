@@ -1,7 +1,10 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from markupfield.fields import MarkupField
+
+DEFAULT_MARKUP_TYPE = getattr(settings, 'MARKUPWIKI_DEFAULT_MARKUP_TYPE', 'plain')
 
 PUBLIC, LOCKED, DELETED = range(3)
 ARTICLE_STATUSES = (
@@ -43,7 +46,7 @@ class ArticleVersion(models.Model):
     number = models.PositiveIntegerField()
     timestamp = models.DateTimeField(auto_now_add=True)
     removed = models.BooleanField(default=False)
-    body = MarkupField()
+    body = MarkupField(default_markup_type=DEFAULT_MARKUP_TYPE)
 
     class Meta:
         ordering = ['timestamp']
