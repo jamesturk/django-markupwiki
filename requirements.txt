@@ -1,0 +1,2 @@
+Django
+-e git+git@github.com:jamesturk/django-markupfield.git#egg=django-markupfield

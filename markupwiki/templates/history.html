@@ -1,0 +1,32 @@
+
+<h2>History {{article.title}}</h2>
+
+<table>
+<tr>
+    <th>Version</th>
+    <th>Author</th>
+    <th>Date</th>
+    <th>Compare From</th>
+    <th>Compare To</th>
+</tr>
+
+<form action="{% url article_diff article.title %}" method="GET">
+{% for version in versions %}
+<tr>
+    <td><a href="{{version.get_absolute_url}}">
+    {% ifequal version.number 0 %}
+        Initial Version
+    {% else %}
+        Revision {{version.number}}
+    {% endifequal %}
+    </a></td>
+    <td>{{version.author}}</td>
+    <td><a href="{{version.get_absolute_url}}">{{version.timestamp}}</a></td>
+    <td><input type="radio" name="from" value="{{version.number}}"></td>
+    <td><input type="radio" name="to" value="{{version.number}}"></td>
+</tr>
+{% endfor %}
+</table>
+
+<input type="submit">
+</form>
