@@ -17,9 +17,11 @@
     {% if article.editable %}
         <a href="{% url edit_article article.title %}">edit article</a> |
     {% endif %}
-    <a href="{% url article_history article.title %}">view history</a>
+    {% if article %}
+        <a href="{% url article_history article.title %}">view history</a>
+    {% endif %}
 
-    {% if form %}
+    {% if article and form %}
     <form method="POST" action="{% url update_article_status article.title %}">
         {{form.status.label_tag}}  {{ form.status }}
         <input type="submit" />

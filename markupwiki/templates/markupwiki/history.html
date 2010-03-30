@@ -1,11 +1,17 @@
+{% extends "markupwiki/article.html" %}
 
-<h2>History {{article.title}}</h2>
+{% block article_title %}
+{{article.title}} [History]
+{% endblock %}
 
+{% block article_meta %} {% endblock %}
+
+{% block article_body %}
 <table>
 <tr>
     <th>Version</th>
     <th>Author</th>
-    <th>Date</th>
+    <th>Timestamp</th>
     <th>Compare From</th>
     <th>Compare To</th>
 </tr>
@@ -15,13 +21,13 @@
 <tr>
     <td><a href="{{version.get_absolute_url}}">
     {% ifequal version.number 0 %}
-        Initial Version
+        Initial
     {% else %}
         Revision {{version.number}}
     {% endifequal %}
     </a></td>
     <td>{{version.author}}</td>
-    <td><a href="{{version.get_absolute_url}}">{{version.timestamp}}</a></td>
+    <td><a href="{{version.get_absolute_url}}">{{version.timestamp|date:"Y-m-d H:i:s"}}</a></td>
     <td><input type="radio" name="from" value="{{version.number}}"></td>
     <td><input type="radio" name="to" value="{{version.number}}"></td>
 </tr>
@@ -30,3 +36,4 @@
 
 <input type="submit">
 </form>
+{% endblock %}

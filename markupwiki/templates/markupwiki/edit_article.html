@@ -1,0 +1,16 @@
+{% extends "markupwiki/article.html" %}
+
+{% block article_title %}
+    {% if article %}
+        Editing "{{title}}"
+    {% else %}
+        Creating New Article "{{title}}"
+    {% endif %}
+{% endblock article_title %}
+
+{% block article_body %}
+<form method="POST" action=".">
+    {{ form.as_ul }}
+    <input type="submit">
+</form>
+{% endblock %}

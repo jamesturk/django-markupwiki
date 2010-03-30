@@ -75,8 +75,9 @@ def edit_article(request, title):
     except Article.DoesNotExist:
         article = None
 
-    if article and article.is_locked():
-        return render_to_response('locked_article.html', {'article': article})
+    if article and article.is_locked() and not user.is_staff:
+        return render_to_response('locked_article.html', {'article': article},
+                                  context_instance=RequestContext(request))
 
     if request.method == 'GET':
         # either get an empty ArticleForm or one based on latest version
@@ -108,9 +109,9 @@ def edit_article(request, title):
             # redirect to view article on save
             return redirect(article)
 
-    return render_to_response('edit_article.html', {'title':title,
-                                                    'article':article,
-                                                    'form': form})
+    return render_to_response('markupwiki/edit_article.html',
+                              {'title':title, 'article':article, 'form': form},
+                              context_instance=RequestContext(request))
 
 
 @require_POST
@@ -129,8 +130,9 @@ def article_status(request, title):
 def article_history(request, title):
     article = get_object_or_404(Article, title=title)
     versions = article.versions.filter(removed=False)
-    return render_to_response('history.html', {'article':article,
-                                               'versions':versions})
+    return render_to_response('markupwiki/history.html',
+                              {'article':article, 'versions':versions},
+                              context_instance=RequestContext(request))
 
 @title_check
 def article_diff(request, title):
@@ -143,4 +145,5 @@ def article_diff(request, title):
     from_body = from_version.body.raw.split('\n')
     to_body = to_version.body.raw.split('\n')
     table = differ.make_table(from_body, to_body)
-    return render_to_response('article_diff.html', {'table':table})
+    return render_to_response('article_diff.html', {'table':table},
+                              context_instance=RequestContext(request))
