@@ -2,11 +2,11 @@ from difflib import HtmlDiff
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.utils.functional import wraps
-from markupwiki.models import Article, PUBLIC, PRIVATE, DELETED, LOCKED
-from markupwiki.forms import ArticleForm, StaffModerationForm, ModerationForm
+from markupwiki.models import Article, PUBLIC, DELETED, LOCKED
+from markupwiki.forms import ArticleForm, StaffModerationForm
 
 def title_check(view):
     def new_view(request, title, *args, **kwargs):
@@ -28,13 +28,10 @@ def view_article(request, title, n=None):
     Context:
         article - ``Article`` instance
         version - ``ArticleVersion`` to display
-        form    - ``ModerationForm`` or ``StaffModerationForm`` instance
-                  only present if user is staff or the article creator
+        form    - ``StaffModerationForm`` instance present if user is staff
 
-    Templates:
+    Template:
         article.html - default template used
-        deleted_article.html - template used if article has been deleted
-        private_article.html - template used if article is private for user
     '''
 
     try:
@@ -53,19 +50,8 @@ def view_article(request, title, n=None):
 
     context = {'article':article, 'version': version}
 
-
     if request.user.is_staff:
         context['form'] = StaffModerationForm(instance=article)
-    elif request.user == article.creator and article.status in (PUBLIC, PRIVATE):
-        context['form'] = ModerationForm(instance=article)
-
-    if article.is_deleted():
-        return render_to_response('markupwiki/deleted_article.html', context,
-                                  context_instance=RequestContext(request))
-    elif (article.is_private() and request.user != article.creator
-          and not request.user.is_staff):
-        return render_to_response('private_article.html', context,
-                                  context_instance=RequestContext(request))
 
     return render_to_response('markupwiki/article.html', context,
                               context_instance=RequestContext(request))
@@ -128,27 +114,16 @@ def edit_article(request, title):
 
 
 @require_POST
+@user_passes_test(lambda u: u.is_staff)
 @title_check
 def article_status(request, title):
-    ''' POST-only view to update article status
+    ''' POST-only view to update article status (staff-only)
     '''
     article = get_object_or_404(Article, title=title)
-    status = int(request.POST['status'])
+    article.status = int(request.POST['status'])
+    article.save()
 
-    # can only change status to/from locked or deleted if staff
-    if article.status in (LOCKED, DELETED) or status in (LOCKED, DELETED):
-        perm_test = lambda u,a: u.is_staff
-    # can only change status to/from public/private if staff or creator
-    elif article.status in (PUBLIC, PRIVATE) or status in (PUBLIC, PRIVATE):
-        perm_test = lambda u,a: u.is_staff or u == a.creator
-
-    # check that requrired permissions are met before updating status
-    if perm_test(request.user, article):
-        article.status = status
-        article.save()
-        return redirect(article)
-    else:
-        return HttpResponseForbidden('access denied')
+    return redirect(article)
 
 @title_check
 def article_history(request, title):

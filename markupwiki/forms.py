@@ -1,5 +1,5 @@
 from django import forms
-from markupwiki.models import Article, ArticleVersion, PUBLIC, PRIVATE
+from markupwiki.models import Article, ArticleVersion
 
 class ArticleForm(forms.ModelForm):
     class Meta:
@@ -10,10 +10,3 @@ class StaffModerationForm(forms.ModelForm):
     class Meta:
         model = Article
         fields = ['status']
-
-class ModerationForm(forms.ModelForm):
-    class Meta:
-        model = Article
-        fields = ['status']
-    status = forms.ChoiceField(choices=((PUBLIC, 'Public'),
-                                        (PRIVATE, 'Private')))

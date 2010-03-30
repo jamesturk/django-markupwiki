@@ -3,10 +3,9 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from markupfield.fields import MarkupField
 
-PUBLIC, PRIVATE, LOCKED, DELETED = range(4)
+PUBLIC, LOCKED, DELETED = range(3)
 ARTICLE_STATUSES = (
     (PUBLIC, 'Public'),     # public - no restrictions on viewing/editing
-    (PRIVATE, 'Private'),   # private - only creator / admins can view
     (LOCKED, 'Locked'),     # locked - only admins can edit
     (DELETED, 'Deleted'),   # deleted - display deleted page
 )
@@ -24,9 +23,6 @@ class Article(models.Model):
 
     def is_public(self):
         return self.status == PUBLIC
-
-    def is_private(self):
-        return self.status == PRIVATE
 
     def is_locked(self):
         return self.status == LOCKED
