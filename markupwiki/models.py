@@ -1,10 +1,13 @@
+import datetime
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from markupfield.fields import MarkupField
 
 DEFAULT_MARKUP_TYPE = getattr(settings, 'MARKUPWIKI_DEFAULT_MARKUP_TYPE', 'plain')
+WRITE_LOCK_SECONDS = getattr(settings, 'MARKUPWIKI_WRITE_LOCK_SECONDS', 60)
 
 PUBLIC, LOCKED, DELETED = range(3)
 ARTICLE_STATUSES = (
@@ -39,6 +42,14 @@ class Article(models.Model):
         else:
             return user.is_authenticated()
 
+    def get_write_lock(self, user):
+        cache_key = 'markupwiki_articlelock_%s' % self.id
+        lock = cache.get(cache_key)
+        if lock:
+            return lock == user.id
+
+        cache.set(cache_key, user.id, WRITE_LOCK_SECONDS)
+        return True
 
 class ArticleVersion(models.Model):
     article = models.ForeignKey(Article, related_name='versions')

@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
 from django.template import RequestContext
 from django.utils.functional import wraps
 from markupwiki.models import Article, PUBLIC, DELETED, LOCKED
@@ -75,13 +76,19 @@ def edit_article(request, title):
     except Article.DoesNotExist:
         article = None
 
-    if article and article.is_locked() and not user.is_staff:
-        return render_to_response('locked_article.html', {'article': article},
-                                  context_instance=RequestContext(request))
+    # check for staff lock
+    if article and not article.is_editable_by_user(request.user):
+        return HttpResponseForbidden('not authorized to edit')
 
     if request.method == 'GET':
         # either get an empty ArticleForm or one based on latest version
         if article:
+
+            if not article.get_write_lock(request.user):
+                # set message and redirect
+                messages.info(request, 'Someone else is currently editing this page, please wait and try again.')
+                return redirect(article)
+
             version = article.versions.latest()
             form = ArticleForm(data={'body':version.body,
                                'body_markup_type':version.body_markup_type})
@@ -96,6 +103,11 @@ def edit_article(request, title):
                                                  creator=request.user)
                 num = 0
             else:
+                if not article.get_write_lock(request.user):
+                    # set message and redirect
+                    messages.error(request, 'You took too long to edit and someone else is now editing this page.')
+                    return redirect(article)
+
                 # otherwise get latest num
                 num = article.versions.latest().number + 1
 
