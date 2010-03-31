@@ -52,7 +52,7 @@ def view_article(request, title, n=None):
     context = {'article':article, 'version': version}
 
     if request.user.is_staff:
-        context['form'] = StaffModerationForm(instance=article)
+        context['mod_form'] = StaffModerationForm(instance=article)
 
     return render_to_response('markupwiki/article.html', context,
                               context_instance=RequestContext(request))

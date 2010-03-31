@@ -20,21 +20,23 @@
     {% if article %}
         <a href="{% url article_history article.title %}">view history</a>
     {% endif %}
-
-    {% if article and form %}
-    <form method="POST" action="{% url update_article_status article.title %}">
-        <ul>
-        <li>{{form.status.label_tag}}  {{ form.status }}</li>
-        <li>
-        <button class="updateBtn" type="submit">
-            <span>Update</span>
-        </button>
-        </li>
-        </ul>
-    </form>
-    {% endif %}
 {% endblock %}
 </div>
+
+{% if article and mod_form %}
+<div class="article_moderation">
+<form method="POST" action="{% url update_article_status article.title %}">
+    <ul>
+    <li>{{mod_form.status.label_tag}}  {{ mod_form.status }}</li>
+    <li>
+    <button class="updateBtn" type="submit">
+        <span>Update</span>
+    </button>
+    </li>
+    </ul>
+</form>
+</div>
+{% endif %}
 
 <div class="article_body">
 {% block article_body %}
