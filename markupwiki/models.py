@@ -42,10 +42,12 @@ class Article(models.Model):
         else:
             return user.is_authenticated()
 
-    def get_write_lock(self, user):
+    def get_write_lock(self, user, release=False):
         cache_key = 'markupwiki_articlelock_%s' % self.id
         lock = cache.get(cache_key)
         if lock:
+            if release:
+                cache.delete(cache_key)
             return lock == user.id
 
         cache.set(cache_key, user.id, WRITE_LOCK_SECONDS)

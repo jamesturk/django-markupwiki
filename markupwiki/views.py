@@ -105,7 +105,7 @@ def edit_article(request, title):
             else:
                 if not article.get_write_lock(request.user):
                     # set message and redirect
-                    messages.error(request, 'You took too long to edit and someone else is now editing this page.')
+                    messages.error(request, 'Your session timed out and someone else is now editing this page.')
                     return redirect(article)
 
                 # otherwise get latest num
@@ -117,6 +117,8 @@ def edit_article(request, title):
             version.author = request.user
             version.number = num
             version.save()
+
+            article.get_write_lock(request.user, release=True)
 
             # redirect to view article on save
             return redirect(article)
