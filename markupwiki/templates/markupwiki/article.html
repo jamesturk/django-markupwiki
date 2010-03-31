@@ -23,8 +23,14 @@
 
     {% if article and form %}
     <form method="POST" action="{% url update_article_status article.title %}">
-        {{form.status.label_tag}}  {{ form.status }}
-        <input type="submit" />
+        <ul>
+        <li>{{form.status.label_tag}}  {{ form.status }}</li>
+        <li>
+        <button class="updateBtn" type="submit">
+            <span>Update</span>
+        </button>
+        </li>
+        </ul>
     </form>
     {% endif %}
 {% endblock %}
