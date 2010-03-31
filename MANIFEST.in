@@ -1,0 +1,4 @@
+include README.rst
+include LICENSE
+include CHANGELOG
+recursive-include markupwiki/templates *.html

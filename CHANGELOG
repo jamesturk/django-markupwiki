@@ -1,0 +1,10 @@
+0.2.0
+===================
+    - simplification of status
+    - addition of optional comment fields on edit
+    - cache-based lock for writing
+    - added MARKUPWIKI_ settings
+
+0.1.0
+=====
+    - internal pre-git code
