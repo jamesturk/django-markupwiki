@@ -140,6 +140,21 @@ def article_status(request, title):
 
     return redirect(article)
 
+@require_POST
+@user_passes_test(lambda u: u.is_staff)
+@title_check
+def revert(request, title):
+    ''' POST-only view to revert article to a specific revision
+    '''
+    article = get_object_or_404(Article, title=title)
+    revision_id = int(request.POST['revision'])
+    revision = get_object_or_404(revision, number=revision_id)
+    ArticleVersion.objects.create(article=article, author=request.user,
+                                  number=article.versions.latest().number,
+                                  body=revision.body)
+
+    return redirect(article)
+
 @title_check
 def article_history(request, title):
     article = get_object_or_404(Article, title=title)

@@ -57,9 +57,11 @@ class ArticleVersion(models.Model):
     article = models.ForeignKey(Article, related_name='versions')
     author = models.ForeignKey(User, related_name='article_versions')
     number = models.PositiveIntegerField()
+    body = MarkupField(default_markup_type=DEFAULT_MARKUP_TYPE)
+    comment = models.CharField(max_length=200, blank=True)
+
     timestamp = models.DateTimeField(auto_now_add=True)
     removed = models.BooleanField(default=False)
-    body = MarkupField(default_markup_type=DEFAULT_MARKUP_TYPE)
 
     class Meta:
         ordering = ['timestamp']
