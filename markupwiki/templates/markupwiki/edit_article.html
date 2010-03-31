@@ -9,11 +9,21 @@
 {% endblock article_title %}
 
 {% block article_meta %}
+    {% if article %}
+        <a href="{% url view_article article.title %}">view article</a> |
+        <a href="{% url article_history article.title %}">view history</a>
+    {% endif %}
 {% endblock %}
 
 {% block article_body %}
 <form method="POST" action=".">
-    {{ form.as_ul }}
-    <input type="submit">
+    <ul>
+        {{ form.as_ul }}
+    <li>
+        <button class="submitBtn" type="submit">
+            <span>Post</span>
+        </button>
+    </li>
+    </ul>
 </form>
 {% endblock %}

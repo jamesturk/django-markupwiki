@@ -4,18 +4,23 @@
 {{article.title}} [History]
 {% endblock %}
 
-{% block article_meta %} {% endblock %}
+{% block article_meta %}
+    <a href="{% url view_article article.title %}">view article</a>
+    {% if article.editable %}
+        <a href="{% url edit_article article.title %}">edit article</a> |
+    {% endif %}
+{% endblock %}
 
 {% block article_body %}
 <table>
-<tr>
+<thead> <tr>
     <th>Version</th>
     <th>Author</th>
     <th>Timestamp</th>
     <th>Compare From</th>
     <th>Compare To</th>
-</tr>
-
+</tr></thead>
+<tbody>
 <form action="{% url article_diff article.title %}" method="GET">
 {% for version in versions %}
 <tr>
@@ -32,8 +37,11 @@
     <td><input type="radio" name="to" value="{{version.number}}"></td>
 </tr>
 {% endfor %}
+</tbody>
 </table>
 
-<input type="submit">
+<button class="submitBtn" type="submit">
+    <span>Compare Selected Versions</span>
+</button>
 </form>
 {% endblock %}
