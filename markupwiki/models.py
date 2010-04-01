@@ -68,7 +68,7 @@ class ArticleVersion(models.Model):
         get_latest_by = 'timestamp'
 
     def __unicode__(self):
-        return unicode(self.article)
+        return '%s rev #%s' % (self.article, self.number)
 
     def get_absolute_url(self):
         return reverse('article_version', args=[self.article.title, self.number])
