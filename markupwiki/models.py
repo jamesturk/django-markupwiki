@@ -20,6 +20,7 @@ class Article(models.Model):
     title = models.CharField(max_length=50)
     creator = models.ForeignKey(User, related_name='wiki_articles')
     status = models.IntegerField(choices=ARTICLE_STATUSES, default=PUBLIC)
+    redirect_to = models.ForeignKey('self', null=True)
 
     def __unicode__(self):
         return self.title

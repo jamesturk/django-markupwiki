@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.template import RequestContext
 from django.utils.functional import wraps
 from markupwiki.models import Article, PUBLIC, DELETED, LOCKED
-from markupwiki.forms import ArticleForm, StaffModerationForm
+from markupwiki.forms import ArticleForm, StaffModerationForm, ArticleRenameForm
 
 def title_check(view):
     def new_view(request, title, *args, **kwargs):
@@ -27,9 +27,10 @@ def view_article(request, title, n=None):
     if the article does not exist the user will be redirected to the edit page
 
     Context:
-        article - ``Article`` instance
-        version - ``ArticleVersion`` to display
-        form    - ``StaffModerationForm`` instance present if user is staff
+        article     - ``Article`` instance
+        version     - ``ArticleVersion`` to display
+        mod_form    - ``StaffModerationForm`` instance present if user is staff
+        rename_form - ``ArticleRenameForm`` instance present if user is staff
 
     Template:
         article.html - default template used
@@ -39,6 +40,9 @@ def view_article(request, title, n=None):
         article = Article.objects.get(title=title)
     except Article.DoesNotExist:
         return redirect('edit_article', title)
+
+    if article.redirect_to_id:
+        return redirect(article.redirect_to)
 
     if n:
         version = article.versions.get(number=n)
@@ -53,6 +57,7 @@ def view_article(request, title, n=None):
 
     if request.user.is_staff:
         context['mod_form'] = StaffModerationForm(instance=article)
+        context['rename_form'] = ArticleRenameForm()
 
     return render_to_response('markupwiki/article.html', context,
                               context_instance=RequestContext(request))
@@ -151,9 +156,24 @@ def revert(request, title):
     revision = get_object_or_404(revision, number=revision_id)
     ArticleVersion.objects.create(article=article, author=request.user,
                                   number=article.versions.latest().number,
+                                  comment='reverted to r%s' % revision_id,
                                   body=revision.body)
 
     return redirect(article)
+
+@require_POST
+@user_passes_test(lambda u: u.is_staff)
+@title_check
+def rename(request, title):
+    ''' POST-only view to rename article '''
+    article = get_object_or_404(Article, title=title)
+    new_title = request.POST['new_title']
+    article.title = new_title
+    print new_title
+    article.save()
+    new_article = Article.objects.create(title=title, creator=request.user,
+                                         redirect_to=article)
+    return redirect(new_article)
 
 @title_check
 def article_history(request, title):

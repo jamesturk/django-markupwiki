@@ -4,6 +4,31 @@
 
 {% block content %}
 
+{% if article and mod_form %}
+<div class="article_moderation">
+<form method="POST" action="{% url update_article_status article.title %}">
+    <ul>
+    <li>{{mod_form.status.label_tag}}  {{ mod_form.status }}</li>
+    <li>
+    <button class="updateBtn" type="submit">
+        <span>Update</span>
+    </button>
+    </li>
+    </ul>
+</form>
+<form method="POST" action="{% url rename_article article.title %}">
+    <ul>
+    {{ rename_form.as_ul}}
+    <li>
+    <button class="updateBtn" type="submit">
+        <span>Rename</span>
+    </button>
+    </li>
+    </ul>
+</form>
+</div>
+{% endif %}
+
 <h2 class="article_title">
 {% block article_title %}
     {{article.title}}
@@ -22,21 +47,6 @@
     {% endif %}
 {% endblock %}
 </div>
-
-{% if article and mod_form %}
-<div class="article_moderation">
-<form method="POST" action="{% url update_article_status article.title %}">
-    <ul>
-    <li>{{mod_form.status.label_tag}}  {{ mod_form.status }}</li>
-    <li>
-    <button class="updateBtn" type="submit">
-        <span>Update</span>
-    </button>
-    </li>
-    </ul>
-</form>
-</div>
-{% endif %}
 
 <div class="article_body">
 {% block article_body %}

@@ -15,3 +15,7 @@ class StaffModerationForm(forms.ModelForm):
     class Meta:
         model = Article
         fields = ['status']
+
+
+class ArticleRenameForm(forms.Form):
+    new_title = forms.CharField(label='Rename', max_length=50)
