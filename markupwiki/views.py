@@ -50,6 +50,9 @@ def view_article(request, title, n=None):
         version = article.versions.latest()
         version.is_latest = True
 
+    # display title
+    article.title = article.title.replace('_', ' ')
+
     # set editable flag on article
     article.editable = article.is_editable_by_user(request.user)
 
@@ -194,7 +197,7 @@ def article_diff(request, title):
     from_body = from_version.body.raw.split('\n')
     to_body = to_version.body.raw.split('\n')
     table = differ.make_table(from_body, to_body)
-    return render_to_response('article_diff.html',
+    return render_to_response('markupwiki/article_diff.html',
                               {'article': article, 'table':table,
                                'from': from_id, 'to':to_id},
                               context_instance=RequestContext(request))
