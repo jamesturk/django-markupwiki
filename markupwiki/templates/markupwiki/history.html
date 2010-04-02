@@ -17,6 +17,7 @@
     <th>Version</th>
     <th>Author</th>
     <th>Timestamp</th>
+    <th>Comment</th>
     <th>Compare From</th>
     <th>Compare To</th>
 </tr></thead>
@@ -33,6 +34,7 @@
     </a></td>
     <td>{{version.author}}</td>
     <td><a href="{{version.get_absolute_url}}">{{version.timestamp|date:"Y-m-d H:i:s"}}</a></td>
+    <td>{{version.comment|default:""}}</td>
     <td><input type="radio" name="from" value="{{version.number}}"></td>
     <td><input type="radio" name="to" value="{{version.number}}"></td>
 </tr>

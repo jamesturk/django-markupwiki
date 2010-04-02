@@ -18,7 +18,9 @@
 {% block article_body %}
 <form method="POST" action=".">
     <ul>
-        {{ form.as_ul }}
+        <li>{{form.body}}</li>
+        <li>{{form.comment.label_tag}} {{ form.comment }} </li>
+        <li>{{form.body_markup_type.label_tag}} {{ form.body_markup_type }} </li>
     <li>
         <button class="submitBtn" type="submit">
             <span>Save Changes</span>
