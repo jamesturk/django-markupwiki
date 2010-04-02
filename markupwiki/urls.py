@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-WIKI_REGEX = r'^(?P<title>[\w\s]+)'
+WIKI_REGEX = r'^(?P<title>[^/]+)'
 
 urlpatterns = patterns('markupwiki.views',
     url(WIKI_REGEX + '/$', 'view_article', name='view_article'),

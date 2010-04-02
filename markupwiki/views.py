@@ -50,7 +50,7 @@ def view_article(request, title, n=None):
         version = article.versions.latest()
         version.is_latest = True
 
-    # display title
+    # change article for display
     article.title = article.title.replace('_', ' ')
 
     # set editable flag on article

@@ -14,15 +14,15 @@ might not be for you.
 Requirements
 ------------
 
-django-markupwiki depends on django 1.2+, django-markupfield and libraries
-for whichever markup options you wish to include.
+django-markupwiki depends on django 1.2+, django-markupfield 1.0.0b+ and
+libraries for whichever markup options you wish to include.
 
 
 Settings
 ========
 
 To best make use of MarkupField you should define the 
-``MARKUP_FIELD_TYPES`` setting, a dictionary of strings to callables that 
+``MARKUPWIKI_MARKUP_TYPES`` setting, a dictionary of strings to callables that 
 'render' a markup type::
 
     import markdown
@@ -32,12 +32,12 @@ To best make use of MarkupField you should define the
         parts = publish_parts(source=markup, writer_name="html4css1")
         return parts["fragment"]
 
-    MARKUP_FIELD_TYPES = {
+    MARKUPWIKI_MARKUP_TYPES = {
         'markdown': markdown.markdown,
         'ReST': render_rest,
     }
 
-If you do not define a ``MARKUP_FIELD_TYPES`` then one is provided with the
+If you do not define a ``MARKUPWIKI_MARKUP_TYPES`` then one is provided with the
 following markup types available:
 
 html:

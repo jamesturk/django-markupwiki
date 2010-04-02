@@ -5,9 +5,17 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from markupfield.fields import MarkupField
+from markupfield import markup
+from markupwiki.utils import wikify_markup_wrapper
 
 DEFAULT_MARKUP_TYPE = getattr(settings, 'MARKUPWIKI_DEFAULT_MARKUP_TYPE', 'plain')
 WRITE_LOCK_SECONDS = getattr(settings, 'MARKUPWIKI_WRITE_LOCK_SECONDS', 60)
+MARKUP_TYPES = getattr(settings, 'MARKUPWIKI_MARKUP_TYPES', markup.DEFAULT_MARKUP_TYPES)
+
+# add make_wiki_links to MARKUP_TYPES
+WIKI_MARKUP_TYPES = []
+for name, func in MARKUP_TYPES:
+    WIKI_MARKUP_TYPES.append((name, wikify_markup_wrapper(func)))
 
 PUBLIC, LOCKED, DELETED = range(3)
 ARTICLE_STATUSES = (
@@ -58,7 +66,8 @@ class ArticleVersion(models.Model):
     article = models.ForeignKey(Article, related_name='versions')
     author = models.ForeignKey(User, related_name='article_versions')
     number = models.PositiveIntegerField()
-    body = MarkupField(default_markup_type=DEFAULT_MARKUP_TYPE)
+    body = MarkupField(default_markup_type=DEFAULT_MARKUP_TYPE,
+                       markup_choices=WIKI_MARKUP_TYPES)
     comment = models.CharField(max_length=200, blank=True)
 
     timestamp = models.DateTimeField(auto_now_add=True)
