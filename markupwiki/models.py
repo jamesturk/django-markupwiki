@@ -37,6 +37,11 @@ class Article(models.Model):
     def display_title(self):
         return self.title.rsplit('/',1)[-1].replace('_', ' ')
 
+    @property
+    def section_name(self):
+        if '/' in self.title:
+            return self.title.rsplit('/',1)[0]
+
     def get_absolute_url(self):
         return reverse('view_article', args=[self.title])
 
