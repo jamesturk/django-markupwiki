@@ -31,7 +31,7 @@
 
 <h2 class="article_title">
 {% block article_title %}
-    {{article.title}}
+    {{article.display_title}}
     {% if article.is_deleted %} [deleted] {% endif %}
     {% if not version.is_latest %} [revision {{version.number}}] {% endif %}
 {% endblock %}

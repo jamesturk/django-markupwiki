@@ -33,6 +33,10 @@ class Article(models.Model):
     def __unicode__(self):
         return self.title
 
+    @property
+    def display_title(self):
+        return self.title.rsplit('/',1)[-1].replace('_', ' ')
+
     def get_absolute_url(self):
         return reverse('view_article', args=[self.title])
 
