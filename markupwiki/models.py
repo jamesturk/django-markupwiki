@@ -25,7 +25,7 @@ ARTICLE_STATUSES = (
 )
 
 class Article(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=200)
     creator = models.ForeignKey(User, related_name='wiki_articles')
     status = models.IntegerField(choices=ARTICLE_STATUSES, default=PUBLIC)
     redirect_to = models.ForeignKey('self', null=True)
