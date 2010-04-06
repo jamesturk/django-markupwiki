@@ -27,7 +27,7 @@ write lock (default: 300)
 
 ``MARKUPWIKI_CREATE_MISSING_ARTICLES`` - if True when attempting to go to an
 article that doesn't exist, user will be redirected to the /edit/ page.  If
-False user will get a 404.
+False user will get a 404. (default: True)
 
 ``MARKUPWIKI_DEFAULT_MARKUP_TYPE`` - default markup type to use
 (default: markdown)
@@ -49,3 +49,5 @@ callable is used to 'render' a markup type.  Example::
         ('markdown', markdown.markdown),
         ('ReST', render_rest)
     )
+
+Defaults to ``django-markupfield``'s detected markup types.

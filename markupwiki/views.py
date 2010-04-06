@@ -11,7 +11,7 @@ from django.utils.functional import wraps
 from markupwiki.models import Article, PUBLIC, DELETED, LOCKED
 from markupwiki.forms import ArticleForm, StaffModerationForm, ArticleRenameForm
 
-CREATE_MISSING_ARTICLE = getattr(settings, 'MARKUPWIKI_CREATE_MISSING_ARTICLES', False)
+CREATE_MISSING_ARTICLE = getattr(settings, 'MARKUPWIKI_CREATE_MISSING_ARTICLES', True)
 
 def title_check(view):
     def new_view(request, title, *args, **kwargs):
