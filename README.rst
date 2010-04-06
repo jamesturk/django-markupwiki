@@ -21,9 +21,22 @@ libraries for whichever markup options you wish to include.
 Settings
 ========
 
-To best make use of MarkupField you should define the 
-``MARKUPWIKI_MARKUP_TYPES`` setting, a dictionary of strings to callables that 
-'render' a markup type::
+
+``MARKUPWIKI_WRITE_LOCK_SECONDS`` - number of seconds that a user can hold a
+write lock (default: 300)
+
+``MARKUPWIKI_CREATE_MISSING_ARTICLES`` - if True when attempting to go to an
+article that doesn't exist, user will be redirected to the /edit/ page.  If
+False user will get a 404.
+
+``MARKUPWIKI_DEFAULT_MARKUP_TYPE`` - default markup type to use
+(default: markdown)
+
+``MARKUPWIKI_MARKUP_TYPE_EDITABLE`` - if False user won't have option to change
+markup type (default: True)
+
+``MARKUPWIKI_MARKUP_TYPES`` - a tuple of string and callable pairs the 
+callable is used to 'render' a markup type.  Example::
 
     import markdown
     from docutils.core import publish_parts
@@ -32,30 +45,7 @@ To best make use of MarkupField you should define the
         parts = publish_parts(source=markup, writer_name="html4css1")
         return parts["fragment"]
 
-    MARKUPWIKI_MARKUP_TYPES = {
-        'markdown': markdown.markdown,
-        'ReST': render_rest,
-    }
-
-If you do not define a ``MARKUPWIKI_MARKUP_TYPES`` then one is provided with the
-following markup types available:
-
-html:
-    allows HTML, potentially unsafe
-plain:
-    plain text markup, calls urlize and replaces text with linebreaks
-markdown:
-    default `markdown`_ renderer (only if `python-markdown`_ is installed)
-restructuredtext:
-    default `ReST`_ renderer (only if `docutils`_ is installed)
-textile:
-    default `textile`_ renderer (only if `textile`_ is installed)
-
-.. _`markdown`: http://daringfireball.net/projects/markdown/
-.. _`ReST`: http://docutils.sourceforge.net/rst.html
-.. _`textile`: http://hobix.com/textile/quick.html
-.. _`python-markdown`: http://www.freewisdom.org/projects/python-markdown/
-.. _`docutils`: http://docutils.sourceforge.net/
-.. _`python-textile`: http://pypi.python.org/pypi/textile
-
-
+    MARKUPWIKI_MARKUP_TYPES = (
+        ('markdown', markdown.markdown),
+        ('ReST', render_rest)
+    )

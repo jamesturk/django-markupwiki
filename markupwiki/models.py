@@ -9,7 +9,7 @@ from markupfield import markup
 from markupwiki.utils import wikify_markup_wrapper
 
 DEFAULT_MARKUP_TYPE = getattr(settings, 'MARKUPWIKI_DEFAULT_MARKUP_TYPE', 'markdown')
-WRITE_LOCK_SECONDS = getattr(settings, 'MARKUPWIKI_WRITE_LOCK_SECONDS', 60)
+WRITE_LOCK_SECONDS = getattr(settings, 'MARKUPWIKI_WRITE_LOCK_SECONDS', 300)
 MARKUP_TYPES = getattr(settings, 'MARKUPWIKI_MARKUP_TYPES', markup.DEFAULT_MARKUP_TYPES)
 
 # add make_wiki_links to MARKUP_TYPES

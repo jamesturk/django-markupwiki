@@ -1,13 +1,17 @@
 from difflib import HtmlDiff
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.http import HttpResponseForbidden
+from django.conf import settings
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.http import Http404
 from django.template import RequestContext
 from django.utils.functional import wraps
 from markupwiki.models import Article, PUBLIC, DELETED, LOCKED
 from markupwiki.forms import ArticleForm, StaffModerationForm, ArticleRenameForm
+
+CREATE_MISSING_ARTICLE = getattr(settings, 'MARKUPWIKI_CREATE_MISSING_ARTICLES', False)
 
 def title_check(view):
     def new_view(request, title, *args, **kwargs):
@@ -39,7 +43,10 @@ def view_article(request, title, n=None):
     try:
         article = Article.objects.get(title=title)
     except Article.DoesNotExist:
-        return redirect('edit_article', title)
+        if CREATE_MISSING_ARTICLE:
+            return redirect('edit_article', title)
+        else:
+            raise Http404()
 
     if article.redirect_to_id:
         return redirect(article.redirect_to)
