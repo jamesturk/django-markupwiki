@@ -68,7 +68,8 @@ class Article(models.Model):
                 cache.delete(cache_key)
             return lock == user.id
 
-        cache.set(cache_key, user.id, WRITE_LOCK_SECONDS)
+        if not release:
+            cache.set(cache_key, user.id, WRITE_LOCK_SECONDS)
         return True
 
 class ArticleVersion(models.Model):

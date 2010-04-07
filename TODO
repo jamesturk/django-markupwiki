@@ -1,8 +1,6 @@
 * revert option
 * wikiword highlighting
 * detect broken wiki links
+* tests
 * only store diffs?
 * anonymous edits?
-
-add options:
-    * MARKUPWIKI_WIKIWORD_RE

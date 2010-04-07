@@ -4,6 +4,7 @@
     - addition of optional comment fields on edit
     - cache-based lock for writing
     - added MARKUPWIKI_ settings
+    - RSS for articles and wiki as a whole
 
 0.1.0
 =====
