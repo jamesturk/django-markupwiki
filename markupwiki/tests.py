@@ -1,10 +1,11 @@
 import time
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.contrib.auth.models import User, AnonymousUser
 from markupwiki.models import Article, PUBLIC, LOCKED, DELETED
 from markupwiki import models
-
+from markupwiki.utils import make_wiki_links, wikify_markup_wrapper
 
 class ArticleTests(TestCase):
 
@@ -39,7 +40,7 @@ class ArticleTests(TestCase):
         self.assert_(deleted_article.is_editable_by_user(staff_user))
 
 
-models.WRITE_LOCK_SECONDS = 3
+models.WRITE_LOCK_SECONDS = 1
 
 class ArticleWriteLockTests(TestCase):
 
@@ -63,7 +64,7 @@ class ArticleWriteLockTests(TestCase):
     def test_lock_timeout(self):
         ''' test that the lock times out properly '''
         alice_initial_lock = self.article.get_write_lock(self.alice)
-        time.sleep(4)
+        time.sleep(2)
         bob_wait_lock = self.article.get_write_lock(self.bob)
 
         self.assertTrue(alice_initial_lock)
@@ -86,3 +87,34 @@ class ArticleWriteLockTests(TestCase):
 
         self.assertTrue(alice_initial_lock)
         self.assertTrue(bob_immediate_lock)
+
+
+class WikifyTests(TestCase):
+
+    def _get_url(self, link, name=None):
+        return '<a href="%s">%s</a>' % (reverse('view_article', args=[link]),
+                                        name or link)
+
+    def test_make_wiki_links_simple(self):
+        result = make_wiki_links('[[test]]')
+        self.assertEquals(result, self._get_url('test'))
+        result = make_wiki_links('[[two words ]]')
+        self.assertEquals(result, self._get_url('two words'))
+        result_ws = make_wiki_links('[[ test ]]')
+        self.assertEquals(result_ws, self._get_url('test'))
+
+    def test_make_wiki_links_named(self):
+        result = make_wiki_links('[[test|this link has a name]]')
+        self.assertEquals(result, self._get_url('test', 'this link has a name'))
+
+    def test_wikify_markup_wrapper(self):
+        wrapped_upper_filter = wikify_markup_wrapper(lambda text: text.upper())
+
+        result = wrapped_upper_filter('[[test]]')
+        self.assertEquals(result, self._get_url('TEST'))
+
+    def test_wikify_markup_wrapper_double_wrap(self):
+        ''' ensure that wrapped functions can't be double wrapped '''
+        wrapped_upper_filter = wikify_markup_wrapper(lambda text: text.upper())
+        self.assertEquals(wrapped_upper_filter,
+                          wikify_markup_wrapper(wrapped_upper_filter))
