@@ -17,7 +17,8 @@ def title_check(view):
     def new_view(request, title, *args, **kwargs):
         newtitle = title.replace(' ', '_')
         if newtitle != title:
-            return redirect(request.path.replace(title, newtitle))
+            return redirect(request.path.replace(title, newtitle),
+                            permanent=True)
         else:
             return view(request, title, *args, **kwargs)
     return wraps(view)(new_view)
