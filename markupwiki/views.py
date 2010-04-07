@@ -176,12 +176,11 @@ def rename(request, title):
     ''' POST-only view to rename article '''
     article = get_object_or_404(Article, title=title)
     new_title = request.POST['new_title']
-    article.title = new_title
-    print new_title
+    article.title = new_title.replace(' ', '_')
     article.save()
     new_article = Article.objects.create(title=title, creator=request.user,
                                          redirect_to=article)
-    return redirect(new_article)
+    return redirect(article)
 
 @title_check
 def article_history(request, title):
