@@ -13,7 +13,7 @@ might not be for you.
 Requirements
 ============
 
-django-markupwiki depends on django 1.2+, django-markupfield 1.0.0b+ and
+django-markupwiki depends on django >= 1.2a, django-markupfield >= 1.0.0a2 and
 libraries for whichever markup options you wish to include.
 
 
@@ -34,13 +34,20 @@ to your urlconf.
 
 This will make the following views available (assuming the defined root is /wiki/):
 
-    /wiki/rss/                             - RSS feed of latest changes to wiki
-    /wiki/*article*/                       - view the latest version of an article
-    /wiki/*article*/rss                    - RSS feed of changes to an article
-    /wiki/*article*/edit/                  - edit (or create) an article
-    /wiki/*article*/history/               - history view for an article
-    /wiki/*article*/history/*revision*/    - view a specific version of an article
-    /wiki/*article*/diff/                  - compare a two revisions of an article
+/wiki/rss/
+    RSS feed of latest changes to wiki
+/wiki/*article*/
+    view the latest version of an article
+/wiki/*article*/rss/
+    RSS feed of changes to an article
+/wiki/*article*/edit/
+    edit (or create) an article
+/wiki/*article*/history/
+    history view for an article
+/wiki/*article*/history/*revision*/
+    view a specific version of an article
+/wiki/*article*/diff/
+    compare a two revisions of an article
 
 settings
 --------
