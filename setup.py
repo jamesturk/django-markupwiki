@@ -4,7 +4,7 @@ long_description = open('README.rst').read()
 
 setup(
     name='django-markupwiki',
-    version="0.2.0",
+    version="0.3.0",
     packages=['markupwiki'],
     package_dir={'markupwiki': 'markupwiki'},
     package_data={'markupwiki': ['templates/markupwiki/*.html']},

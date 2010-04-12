@@ -1,8 +1,14 @@
+0.3.0
+=====
+    - lots of tests
+    - 
+
 0.2.0
 ===================
     - simplification of status
     - addition of optional comment fields on edit
     - cache-based lock for writing
+    - rename view
     - added MARKUPWIKI_ settings
     - RSS for articles and wiki as a whole
 
