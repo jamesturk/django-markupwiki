@@ -49,27 +49,44 @@ This will make the following views available (assuming the defined root is /wiki
 /wiki/*article*/diff/
     compare a two revisions of an article
 
+
+article names
+~~~~~~~~~~~~~
+
+*article* in all of the above URLs is the name of an article: which is basically any string with limited restrictions.  There are a few basic guidelines:
+
+* Spaces in the URL will automatically be converted to underscores.
+* When displaying an article, anything before a / will be linked to an article with that name
+    (eg. /wiki/category/article/ will have a link in the header to /wiki/category/)
+
+
+interwiki links
+---------------
+
+While you are free to use whatever markup you desire, most markup types (ReST, markdown, etc) do not include a standard syntax for interwiki links.  As a result all markup types are augmented with a post-processor that adds support for interwiki links in the [[link text|link]] format.
+
+[[link text|page]] produces a link to an article named 'page' with the text before the | as the anchor.
+
+[[page]] produces a link to an article named 'page' with using the page name as the anchor.
+
 settings
 --------
 
 django-markupwiki provides a number of optional settings that you may wish to use
 to customize the behavior.
 
-``MARKUPWIKI_WRITE_LOCK_SECONDS`` - number of seconds that a user can hold a
-write lock (default: 300)
+``MARKUPWIKI_WRITE_LOCK_SECONDS``
+    number of seconds that a user can hold a write lock (default: 300)
+``MARKUPWIKI_CREATE_MISSING_ARTICLES``
+    if True when attempting to go to an article that doesn't exist, user will be redirected to the /edit/ page.  If False user will get a 404. (default: True)
+``MARKUPWIKI_DEFAULT_MARKUP_TYPE``
+    default markup type to use (default: markdown)
+``MARKUPWIKI_MARKUP_TYPE_EDITABLE``
+    if False user won't have option to change markup type (default: True)
+``MARKUPWIKI_MARKUP_TYPES``
+    a tuple of string and callable pairs the callable is used to 'render' a markup type.  
 
-``MARKUPWIKI_CREATE_MISSING_ARTICLES`` - if True when attempting to go to an
-article that doesn't exist, user will be redirected to the /edit/ page.  If
-False user will get a 404. (default: True)
-
-``MARKUPWIKI_DEFAULT_MARKUP_TYPE`` - default markup type to use
-(default: markdown)
-
-``MARKUPWIKI_MARKUP_TYPE_EDITABLE`` - if False user won't have option to change
-markup type (default: True)
-
-``MARKUPWIKI_MARKUP_TYPES`` - a tuple of string and callable pairs the 
-callable is used to 'render' a markup type.  Example::
+Example::
 
     import markdown
     from docutils.core import publish_parts
