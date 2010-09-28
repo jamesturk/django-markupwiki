@@ -13,7 +13,7 @@ might not be for you.
 Requirements
 ============
 
-django-markupwiki depends on django >= 1.2a, django-markupfield >= 1.0.0a2 and
+django-markupwiki depends on django >= 1.2, django-markupfield >= 1.0.0b and
 libraries for whichever markup options you wish to include.
 
 
