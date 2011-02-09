@@ -37,3 +37,5 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'markupwiki',
 )
+
+SITE_ID = 1
