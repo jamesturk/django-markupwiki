@@ -8,9 +8,15 @@ from markupfield.fields import MarkupField
 from markupfield import markup
 from markupwiki.utils import wikify_markup_wrapper
 
-DEFAULT_MARKUP_TYPE = getattr(settings, 'MARKUPWIKI_DEFAULT_MARKUP_TYPE', 'markdown')
+DEFAULT_MARKUP_TYPE = getattr(settings, 'MARKUPWIKI_DEFAULT_MARKUP_TYPE',
+                              'markdown')
 WRITE_LOCK_SECONDS = getattr(settings, 'MARKUPWIKI_WRITE_LOCK_SECONDS', 300)
-MARKUP_TYPES = getattr(settings, 'MARKUPWIKI_MARKUP_TYPES', markup.DEFAULT_MARKUP_TYPES)
+MARKUP_TYPES = getattr(settings, 'MARKUPWIKI_MARKUP_TYPES',
+                       markup.DEFAULT_MARKUP_TYPES)
+EDITOR_TEST_FUNC = getattr(settings, 'MARKUPWIKI_EDITOR_TEST_FUNC',
+                           lambda u: u.is_authenticated())
+MODERATOR_TEST_FUNC = getattr(settings, 'MARKUPWIKI_MODERATOR_TEST_FUNC',
+                              lambda u: u.is_staff)
 
 # add make_wiki_links to MARKUP_TYPES
 WIKI_MARKUP_TYPES = []
@@ -56,9 +62,9 @@ class Article(models.Model):
 
     def is_editable_by_user(self, user):
         if self.status in (LOCKED, DELETED):
-            return user.is_staff
+            return MODERATOR_TEST_FUNC(user)
         else:
-            return user.is_authenticated()
+            return EDITOR_TEST_FUNC(user)
 
     def get_write_lock(self, user, release=False):
         cache_key = 'markupwiki_articlelock_%s' % self.id

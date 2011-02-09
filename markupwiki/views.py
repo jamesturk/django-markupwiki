@@ -14,6 +14,11 @@ from markupwiki.forms import ArticleForm, StaffModerationForm, ArticleRenameForm
 CREATE_MISSING_ARTICLE = getattr(settings,
                                  'MARKUPWIKI_CREATE_MISSING_ARTICLES', True)
 
+EDITOR_TEST_FUNC = getattr(settings, 'MARKUPWIKI_EDITOR_TEST_FUNC',
+                           lambda u: u.is_authenticated())
+MODERATOR_TEST_FUNC = getattr(settings, 'MARKUPWIKI_MODERATOR_TEST_FUNC',
+                              lambda u: u.is_staff)
+
 def title_check(view):
     def new_view(request, title, *args, **kwargs):
         newtitle = title.replace(' ', '_')
@@ -72,7 +77,7 @@ def view_article(request, title, n=None):
                               context_instance=RequestContext(request))
 
 @title_check
-@login_required
+@user_passes_test(EDITOR_TEST_FUNC)
 def edit_article(request, title):
     ''' edit (or create) an article
 
@@ -143,7 +148,7 @@ def edit_article(request, title):
 
 
 @require_POST
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(MODERATOR_TEST_FUNC)
 @title_check
 def article_status(request, title):
     ''' POST-only view to update article status (staff-only)
@@ -155,7 +160,7 @@ def article_status(request, title):
     return redirect(article)
 
 @require_POST
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(MODERATOR_TEST_FUNC)
 @title_check
 def revert(request, title):
     ''' POST-only view to revert article to a specific revision
@@ -171,7 +176,7 @@ def revert(request, title):
     return redirect(article)
 
 @require_POST
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(MODERATOR_TEST_FUNC)
 @title_check
 def rename(request, title):
     ''' POST-only view to rename article '''
