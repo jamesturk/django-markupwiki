@@ -13,6 +13,8 @@ DEFAULT_MARKUP_TYPE = getattr(settings, 'MARKUPWIKI_DEFAULT_MARKUP_TYPE',
 WRITE_LOCK_SECONDS = getattr(settings, 'MARKUPWIKI_WRITE_LOCK_SECONDS', 300)
 MARKUP_TYPES = getattr(settings, 'MARKUPWIKI_MARKUP_TYPES',
                        markup.DEFAULT_MARKUP_TYPES)
+ESCAPE_HTML = getattr(settings, 'MARKUPWIKI_ESCAPE_HTML',
+                      True)
 EDITOR_TEST_FUNC = getattr(settings, 'MARKUPWIKI_EDITOR_TEST_FUNC',
                            lambda u: u.is_authenticated())
 MODERATOR_TEST_FUNC = getattr(settings, 'MARKUPWIKI_MODERATOR_TEST_FUNC',
@@ -84,7 +86,7 @@ class ArticleVersion(models.Model):
     number = models.PositiveIntegerField()
     body = MarkupField(default_markup_type=DEFAULT_MARKUP_TYPE,
                        markup_choices=WIKI_MARKUP_TYPES,
-                       escape_html=True)
+                       escape_html=ESCAPE_HTML)
     comment = models.CharField(max_length=200, blank=True)
 
     timestamp = models.DateTimeField(auto_now_add=True)
