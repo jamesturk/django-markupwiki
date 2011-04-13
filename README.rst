@@ -84,7 +84,9 @@ to customize the behavior.
 ``MARKUPWIKI_MARKUP_TYPE_EDITABLE``
     if False user won't have option to change markup type (default: True)
 ``MARKUPWIKI_MARKUP_TYPES``
-    a tuple of string and callable pairs the callable is used to 'render' a markup type.  
+    a tuple of string and callable pairs the callable is used to 'render' a markup type.
+``MARKUPWIKI_AUTOLOCK_TIMEDELTA``
+    a datetime.timedelta object that defines the age at which articles get automatically locked by the *autolockarticles* management command.
 
 Example::
 
