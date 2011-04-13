@@ -17,6 +17,7 @@
 
 {% block article_body %}
 <form method="POST" action=".">
+    {% csrf_token %}
     <ul>
         <li>{{form.body}}</li>
         <li>{{form.comment.label_tag}} {{ form.comment }} </li>
