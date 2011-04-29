@@ -115,11 +115,13 @@ def edit_article(request, title):
             form = ArticleForm()
     elif request.method == 'POST':
         form = ArticleForm(request.POST)
+        user = None if request.user.is_anonymous() else request.user
+        
         if form.is_valid():
             if not article:
                 # if article doesn't exist create it and start num at 0
                 article = Article.objects.create(title=title,
-                                                 creator=request.user)
+                                                 creator=user)
                 num = 0
             else:
                 if not article.get_write_lock(request.user):
@@ -133,11 +135,11 @@ def edit_article(request, title):
             # create a new version attached to article specified in name
             version = form.save(False)
             version.article = article
-            version.author = request.user
+            version.author = user
             version.number = num
             version.save()
 
-            article.get_write_lock(request.user, release=True)
+            article.get_write_lock(user or request, release=True)
 
             # redirect to view article on save
             return redirect(article)

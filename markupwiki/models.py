@@ -34,7 +34,7 @@ ARTICLE_STATUSES = (
 
 class Article(models.Model):
     title = models.CharField(max_length=200)
-    creator = models.ForeignKey(User, related_name='wiki_articles')
+    creator = models.ForeignKey(User, related_name='wiki_articles', blank=True, null=True)
     status = models.IntegerField(choices=ARTICLE_STATUSES, default=PUBLIC)
     redirect_to = models.ForeignKey('self', null=True)
 
@@ -49,6 +49,11 @@ class Article(models.Model):
     def section_name(self):
         if '/' in self.title:
             return self.title.rsplit('/',1)[0]
+
+    # def save(self, **kwargs):
+    #     if self.creator is not None and self.creator.is_anonymous():
+    #         self.creator = None
+    #     super(Article, self).save(**kwargs)
 
     def get_absolute_url(self):
         return reverse('view_article', args=[self.title])
@@ -68,21 +73,25 @@ class Article(models.Model):
         else:
             return EDITOR_TEST_FUNC(user)
 
-    def get_write_lock(self, user, release=False):
+    def get_write_lock(self, user_or_request, release=False):
+        if hasattr(user_or_request, 'session'):
+            lock_id = user_or_request.session.session_key
+        else:
+            lock_id = user_or_request.id
         cache_key = 'markupwiki_articlelock_%s' % self.id
         lock = cache.get(cache_key)
         if lock:
             if release:
                 cache.delete(cache_key)
-            return lock == user.id
+            return lock == lock_id
 
         if not release:
-            cache.set(cache_key, user.id, WRITE_LOCK_SECONDS)
+            cache.set(cache_key, lock_id, WRITE_LOCK_SECONDS)
         return True
 
 class ArticleVersion(models.Model):
     article = models.ForeignKey(Article, related_name='versions')
-    author = models.ForeignKey(User, related_name='article_versions')
+    author = models.ForeignKey(User, related_name='article_versions', blank=True, null=True)
     number = models.PositiveIntegerField()
     body = MarkupField(default_markup_type=DEFAULT_MARKUP_TYPE,
                        markup_choices=WIKI_MARKUP_TYPES,
@@ -98,6 +107,11 @@ class ArticleVersion(models.Model):
 
     def __unicode__(self):
         return '%s rev #%s' % (self.article, self.number)
+    
+    # def save(self, **kwargs):
+    #     if self.author is not None and self.author.is_anonymous():
+    #         self.author = None
+    #     super(ArticleVersion, self).save(**kwargs)
 
     def get_absolute_url(self):
         return reverse('article_version', args=[self.article.title, self.number])
