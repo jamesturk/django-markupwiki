@@ -12,6 +12,32 @@
 {% endblock %}
 
 {% block article_body %}
+
+    <form action="{% url revert article.title %}" method="post">
+
+        {% csrf_token %}
+
+        <label for="revert-version">Revert to</label>
+        <select name="revision" id="revert-version">
+            {% for version in versions reversed %}
+                {% if not forloop.first %}
+                    <option value="{{ version.number }}">
+                        {% if version.number == 0 %}
+                            Initial
+                        {% else %}
+                            {{ version.number }}
+                        {% endif %}
+                    </option>
+                {% endif %}
+            {% endfor %}
+        </select>
+
+        <button class="compareBtn" type="submit">
+            <span>Revert to version</span>
+        </button>
+
+    </form>
+
 <table>
 <thead> <tr>
     <th>Version</th>
@@ -46,4 +72,5 @@
     <span>Compare Selected Versions</span>
 </button>
 </form>
+
 {% endblock %}

@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.http import Http404
 from django.template import RequestContext
 from django.utils.functional import wraps
-from markupwiki.models import Article, PUBLIC, DELETED, LOCKED
+from markupwiki.models import Article, ArticleVersion, PUBLIC, DELETED, LOCKED
 from markupwiki.forms import ArticleForm, StaffModerationForm, ArticleRenameForm
 
 CREATE_MISSING_ARTICLE = getattr(settings,
@@ -169,7 +169,7 @@ def revert(request, title):
     '''
     article = get_object_or_404(Article, title=title)
     revision_id = int(request.POST['revision'])
-    revision = get_object_or_404(revision, number=revision_id)
+    revision = get_object_or_404(article.versions, number=revision_id)
     ArticleVersion.objects.create(article=article, author=request.user,
                                   number=article.versions.latest().number,
                                   comment='reverted to r%s' % revision_id,

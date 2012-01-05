@@ -36,7 +36,7 @@ class Article(models.Model):
     title = models.CharField(max_length=200)
     creator = models.ForeignKey(User, related_name='wiki_articles', blank=True, null=True)
     status = models.IntegerField(choices=ARTICLE_STATUSES, default=PUBLIC)
-    redirect_to = models.ForeignKey('self', null=True)
+    redirect_to = models.ForeignKey('self', blank=True, null=True)
 
     def __unicode__(self):
         return self.title

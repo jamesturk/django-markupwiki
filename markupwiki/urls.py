@@ -12,5 +12,6 @@ urlpatterns = patterns('markupwiki.views',
     url(WIKI_REGEX + '/history/$', 'article_history', name='article_history'),
     url(WIKI_REGEX + '/history/(?P<n>\d+)/$', 'view_article', name='article_version'),
     url(WIKI_REGEX + '/diff/$', 'article_diff', name='article_diff'),
+    url(WIKI_REGEX + '/revert/$', 'revert', name='revert'),
     url(WIKI_REGEX + '/$', 'view_article', name='view_article'),
 )
