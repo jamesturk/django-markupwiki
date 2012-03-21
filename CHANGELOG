@@ -1,7 +1,12 @@
 0.3.0
 =====
     - lots of tests
-    - 
+    - new escape_html option
+    - csrf token
+    - autolockarticles management command
+    - null editors
+    - fix revert
+
 
 0.2.0
 ===================
