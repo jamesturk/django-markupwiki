@@ -1,3 +1,5 @@
+import os
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -27,7 +29,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'example.urls'
 
-TEMPLATE_DIRS = ( 'templates', )
+TEMPLATE_DIRS = ( os.path.join(os.path.dirname(__file__), 'templates'), )
 
 INSTALLED_APPS = (
     'django.contrib.auth',
