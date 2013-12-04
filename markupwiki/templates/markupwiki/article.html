@@ -6,7 +6,7 @@
 
 {% if article and mod_form %}
 <div class="article_moderation">
-<form method="POST" action="{% url update_article_status article.title %}">
+<form method="POST" action="{% url "update_article_status" article.title %}">
     <ul>
     <li>{{mod_form.status.label_tag}}  {{ mod_form.status }}</li>
     <li>
@@ -16,7 +16,7 @@
     </li>
     </ul>
 </form>
-<form method="POST" action="{% url rename_article article.title %}">
+<form method="POST" action="{% url "rename_article" article.title %}">
     <ul>
     {{ rename_form.as_ul}}
     <li>
@@ -31,7 +31,7 @@
 
 <h2 class="article_title">
 {% block article_title %}
-{% if article.section_name %}<a href="{% url view_article article.section_name %}">{{article.section_name}}</a> / {% endif %}
+{% if article.section_name %}<a href="{% url "view_article" article.section_name %}">{{article.section_name}}</a> / {% endif %}
 {{article.display_title}}
 
     {% if article.is_deleted %} [deleted] {% endif %}
@@ -42,10 +42,10 @@
 <div class="article_meta">
 {% block article_meta %}
     {% if article.editable %}
-        <a href="{% url edit_article article.title %}">edit article</a> |
+        <a href="{% url "edit_article" article.title %}">edit article</a> |
     {% endif %}
     {% if article %}
-        <a href="{% url article_history article.title %}">view history</a>
+        <a href="{% url "article_history" article.title %}">view history</a>
     {% endif %}
 {% endblock %}
 </div>

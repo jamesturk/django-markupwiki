@@ -10,8 +10,8 @@
 
 {% block article_meta %}
     {% if article %}
-        <a href="{% url view_article article.title %}">view article</a> |
-        <a href="{% url article_history article.title %}">view history</a>
+        <a href="{% url "view_article" article.title %}">view article</a> |
+        <a href="{% url "article_history" article.title %}">view history</a>
     {% endif %}
 {% endblock %}
 
