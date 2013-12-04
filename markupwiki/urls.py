@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from markupwiki.feeds import LatestEditsFeed, LatestArticleEditsFeed
 
 WIKI_REGEX = r'^(?P<title>.+)'
